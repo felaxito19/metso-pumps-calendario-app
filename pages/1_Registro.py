@@ -74,23 +74,25 @@ rango = st.date_input("📅 Seleccionar rango de fechas", [])
 
 
 
-if st.button("💾 Guardar"):
+if not st.session_state.post_guardado:
+    if st.button("💾 Guardar"):
+        
+        # caso SOLO un día
+        if isinstance(rango, date):
+            st.error("Por favor selecciona un rango de dos fechas.")
+            st.stop()
 
-    # caso SOLO un día
-    if isinstance(rango, date):
-        st.error("Por favor selecciona un rango de dos fechas.")
-        st.stop()
+        # caso rango válido
+        inicio, fin = rango
+        delta = fin - inicio
 
-    # caso rango válido (tupla con 2 fechas)
-    inicio, fin = rango
-    delta = fin - inicio
+        for i in range(delta.days + 1):
+            dia = inicio + timedelta(days=i)
+            guardar_evento(persona, cliente, dia.isoformat())
 
-    for i in range(delta.days + 1):
-        dia = inicio + timedelta(days=i)
-        guardar_evento(persona, cliente, dia.isoformat())
+        st.session_state.post_guardado = True
+        st.rerun()
 
-    st.session_state.post_guardado = True
-    st.rerun()
 
 
 # ============================================================
@@ -123,6 +125,7 @@ if st.session_state.post_guardado:
         if st.button("🚪 Salir"):
             st.write("Gracias por registrar la disponibilidad.")
             st.stop()
+
 
 
 
