@@ -80,13 +80,13 @@ st.subheader("🗑 Borrar todos los registros de disponibilidad")
 if "confirm_delete" not in st.session_state:
     st.session_state.confirm_delete = False
 
-# primer botón
-if st.button("🛑 ELIMINAR TODOS LOS REGISTROS", type="primary"):
+# Botón inicial
+if st.button("🛑 ELIMINAR TODOS LOS REGISTROS"):
     st.session_state.confirm_delete = True
 
-# si el usuario presionó el primer botón → mostramos confirmación
+# Si está en modo confirmación…
 if st.session_state.confirm_delete:
-    st.warning("¿Seguro? Esta acción NO se puede deshacer.")
+    st.warning("¿Seguro? Esta acción NO se puede deshacer?")
 
     col1, col2 = st.columns(2)
 
@@ -94,7 +94,7 @@ if st.session_state.confirm_delete:
         if st.button("✔ Sí, borrar todo"):
             supabase.table("BD_calendario_disponibilidad").delete().execute()
             st.success("Todos los registros fueron eliminados correctamente.")
-            st.session_state.confirm_delete = False  # reset
+            st.session_state.confirm_delete = False
             st.rerun()
 
     with col2:
@@ -102,9 +102,4 @@ if st.session_state.confirm_delete:
             st.session_state.confirm_delete = False
             st.rerun()
 
-# Mostrar conteo actual
-resp = supabase.table("BD_calendario_disponibilidad").select("*").execute()
-st.write("Ahora hay:", len(resp.data), "registros")
-
-st.markdown("---")
 
