@@ -1,8 +1,9 @@
 import streamlit as st
-import sqlite3
 import pandas as pd
 import json
 import streamlit.components.v1 as components
+
+
 
 from supabase import create_client, Client
 
@@ -209,6 +210,7 @@ body {{
 
 
 components.html(html_code, height=3200)
+
 
 
 
