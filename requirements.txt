@@ -1,0 +1,4 @@
+supabase
+streamlit
+sqlite
+pandas
