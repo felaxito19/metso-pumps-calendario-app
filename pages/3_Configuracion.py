@@ -92,7 +92,7 @@ if st.session_state.confirm_delete:
 
     with col1:
         if st.button("✔ Sí, borrar todo"):
-            supabase.table("BD_calendario_disponibilidad").delete().execute()
+            supabase.table("BD_calendario_disponibilidad").delete().neq("id", -1).execute()
             st.success("Todos los registros fueron eliminados correctamente.")
             st.session_state.confirm_delete = False
             st.rerun()
