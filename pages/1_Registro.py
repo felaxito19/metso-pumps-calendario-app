@@ -14,121 +14,120 @@ def init_supabase():
 supabase: Client = init_supabase()
 
 #==============================================================
-# CARGAMOS INFORMACIÓN NECESARIA - (funciones)
+# CARGAR CATÁLOGOS
 #==============================================================
-
 def cargar_personas():
     resp = supabase.table("catalogo_personas").select("nombre").execute()
-    data = resp.data or []
-    return [row["nombre"] for row in data]
+    return [row["nombre"] for row in (resp.data or [])]
 
 def cargar_clientes():
     resp = supabase.table("catalogo_clientes").select("nombre").execute()
-    data = resp.data or []
-    return [row["nombre"] for row in data]
+    return [row["nombre"] for row in (resp.data or [])]
 
 # ============================================================
-# GUARDAR EVENTO EN SUPABASE
+# GUARDAR EVENTO EN BD
 # ============================================================
-def guardar_evento(persona, cliente, fecha, tipo):
+def guardar_evento(persona, cliente, fecha):
     data = {
         "persona": persona,
         "cliente": cliente,
-        "fecha": fecha,
-        "tipo": tipo
+        "fecha": fecha
     }
     supabase.table("BD_calendario_disponibilidad").insert(data).execute()
 
 # ============================================================
-# ESTADO GLOBAL PARA SABER SI SE GUARDÓ
+# ESTADOS INICIALES
 # ============================================================
 if "post_guardado" not in st.session_state:
     st.session_state.post_guardado = False
 
+if "default_persona" not in st.session_state:
+    st.session_state.default_persona = None
+
+if "default_cliente" not in st.session_state:
+    st.session_state.default_cliente = None
+
+if "default_rango" not in st.session_state:
+    st.session_state.default_rango = None
+
 # ============================================================
-# UI PRINCIPAL (FORMULARIO)
+# UI PRINCIPAL
 # ============================================================
 st.title("📆 Registrar disponibilidad")
 
 PERSONAS = cargar_personas()
 CLIENTES = cargar_clientes()
 
-# Ingreso de información del periodo de tiempo
-persona = st.selectbox("👤 Nombre del empleado", PERSONAS)
-cliente = st.selectbox("🏢 Cliente", CLIENTES)
+# Usar valores por defecto si existen
+persona_default = st.session_state.default_persona or PERSONAS[0]
+cliente_default = st.session_state.default_cliente or CLIENTES[0]
+rango_default = st.session_state.default_rango or date.today()
 
-# Selección de rango
-rango = st.date_input("📅 Seleccionar rango de fechas", [])
+persona = st.selectbox("👤 Nombre del empleado", PERSONAS, key="persona_input",
+                       index=PERSONAS.index(persona_default))
 
+cliente = st.selectbox("🏢 Cliente", CLIENTES, key="cliente_input",
+                       index=CLIENTES.index(cliente_default))
+
+rango = st.date_input("📅 Seleccionar fecha o rango", 
+                      key="rango_input",
+                      value=rango_default)
+
+# ============================================================
+# BOTÓN GUARDAR
+# ============================================================
 if st.button("💾 Guardar"):
 
-    # caso SOLO un día (date)
+    # 1 SOLO DÍA
     if isinstance(rango, date):
-        guardar_evento(persona, cliente, rango.isoformat(), tipo)
-        st.session_state.post_guardado = True
-        st.rerun()
-
-    # caso rango (tuple)
+        guardar_evento(persona, cliente, rango.isoformat())
+    
+    # RANGO COMPLETO
     elif isinstance(rango, tuple) and len(rango) == 2:
         inicio, fin = rango
-
-        # si el usuario pone fin < inicio, no guardar
         if fin < inicio:
             st.error("La fecha final no puede ser menor que la inicial.")
             st.stop()
 
-        delta = fin - inicio
-        for i in range(delta.days + 1):
-            dia = inicio + timedelta(days=i)
-            guardar_evento(persona, cliente, dia.isoformat(), tipo)
-
-        st.session_state.post_guardado = True
-        st.rerun()
+        for d in range((fin - inicio).days + 1):
+            dia = inicio + timedelta(days=d)
+            guardar_evento(persona, cliente, dia.isoformat())
 
     else:
         st.error("Selecciona una fecha o un rango válido.")
+        st.stop()
+
+    # guardar estado
+    st.session_state.post_guardado = True
+    st.rerun()
 
 # ============================================================
-# MENSAJE DE ÉXITO (DEBAJO DEL FORMULARIO)
+# MENSAJE DE ÉXITO
 # ============================================================
 if st.session_state.post_guardado:
 
     st.success("✔ Registro guardado correctamente.")
-
     st.write("¿Qué deseas hacer ahora?")
 
-    # Una vez guardado el registro:
-    if "default_persona" not in st.session_state:
-    st.session_state.default_persona = PERSONAS[0]
-
-    if "default_cliente" not in st.session_state:
-        st.session_state.default_cliente = CLIENTES[0]
-    
-    if "default_rango" not in st.session_state:
-        st.session_state.default_rango = date.today()
-
-    persona = st.selectbox("Persona:", PERSONAS, key="persona_input", index=PERSONAS.index(st.session_state.default_persona))
-    cliente = st.selectbox("Cliente:", CLIENTES, key="cliente_input", index=CLIENTES.index(st.session_state.default_cliente))
-    rango = st.date_input("Fecha o rango:", key="rango_input", value=st.session_state.default_rango)
-
-    
     col1, col2 = st.columns(2)
 
-    if st.button("🔁 Agregar otra actividad"):
-        st.session_state.post_guardado = False
-    
-        # RESET de valores por defecto
-        st.session_state.default_persona = PERSONAS[0]
-        st.session_state.default_cliente = CLIENTES[0]
-        st.session_state.default_rango = date.today()
-    
-        # RESET de widgets (Streamlit los reconstruye fresh)
-        for key in ["persona_input", "cliente_input", "rango_input"]:
-            if key in st.session_state:
-                del st.session_state[key]
-    
-        st.rerun()
+    with col1:
+        if st.button("🔁 Agregar otra actividad"):
 
+            # Reset de defaults
+            st.session_state.default_persona = PERSONAS[0]
+            st.session_state.default_cliente = CLIENTES[0]
+            st.session_state.default_rango = date.today()
 
+            # Reset widgets
+            for k in ["persona_input", "cliente_input", "rango_input"]:
+                if k in st.session_state:
+                    del st.session_state[k]
 
+            st.session_state.post_guardado = False
+            st.rerun()
 
+    with col2:
+        if st.button("🚪 Salir"):
+            st.write("Gracias por registrar la disponibilidad.")
+            st.stop()
