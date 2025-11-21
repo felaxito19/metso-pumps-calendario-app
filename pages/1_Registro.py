@@ -69,32 +69,23 @@ persona = st.selectbox("👤 Nombre del empleado", PERSONAS, key="persona_input"
 cliente = st.selectbox("🏢 Cliente", CLIENTES, key="cliente_input",
                        index=CLIENTES.index(cliente_default))
 
-rango = st.date_input(
-    "📅 Seleccionar rango de fechas",
-    key="rango_input",
-    value=[]
-)
+# Selección de rango
+rango = st.date_input("📅 Seleccionar rango de fechas", [])
 
-# ============================================================
-# BOTÓN GUARDAR
-# ============================================================
 if st.button("💾 Guardar"):
 
-    # Validar rango
-    if not isinstance(rango, tuple) or len(rango) != 2:
-        st.error("❌ Por favor selecciona un rango de dos fechas.")
+    # caso SOLO un día
+    if isinstance(rango, date):
+        st.error("Por favor selecciona un rango de dos fechas.")
         st.stop()
 
+    # caso rango válido (tupla con 2 fechas)
     inicio, fin = rango
+    delta = fin - inicio
 
-    if fin < inicio:
-        st.error("❌ La fecha final no puede ser menor que la inicial.")
-        st.stop()
-
-    # Guardar cada día dentro del rango
-    for d in range((fin - inicio).days + 1):
-        dia = inicio + timedelta(days=d)
-        guardar_evento(persona, cliente, dia.isoformat())
+    for i in range(delta.days + 1):
+        dia = inicio + timedelta(days=i)
+        guardar_evento(persona, cliente, dia.isoformat(), tipo)
 
     st.session_state.post_guardado = True
     st.rerun()
@@ -130,4 +121,5 @@ if st.session_state.post_guardado:
         if st.button("🚪 Salir"):
             st.write("Gracias por registrar la disponibilidad.")
             st.stop()
+
 
