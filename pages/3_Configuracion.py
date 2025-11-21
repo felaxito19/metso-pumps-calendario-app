@@ -88,7 +88,7 @@ if st.button("🛑 ELIMINAR TODOS LOS REGISTROS", type="primary"):
     st.warning("¿Seguro? Esta acción NO se puede deshacer.")
 
     if st.button("✔ Sí, borrar todo", type="secondary"):
-        supabase.table("BD_calendario_disponibilidad").delete().neq("id", 0).execute()
+        supabase.table("BD_calendario_disponibilidad").delete().execute()
         st.success("Todos los registros fueron eliminados correctamente.")
 
 
