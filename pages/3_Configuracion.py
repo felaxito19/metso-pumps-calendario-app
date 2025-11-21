@@ -18,6 +18,11 @@ def init_supabase():
 
 supabase: Client = init_supabase()
 
+try:
+    test = supabase.table("catalogo_personas").select("*").execute()
+    st.write("TEST OK:", test)
+except Exception as e:
+    st.error(f"ERROR DE SUPABASE: {e}")
 
 
 # ============================================================
