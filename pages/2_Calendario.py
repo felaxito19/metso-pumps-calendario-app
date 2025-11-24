@@ -74,9 +74,9 @@ for usuario, cliente, fecha in data:
     })
 
 # ------------------------------------------------------
-# CONFIG FULLCALENDAR NATIVO
+# RENDER
 # ------------------------------------------------------
-config = {
+options = {
     "initialView": "multiMonthYear",
     "locale": "es",
     "height": "auto",
@@ -86,10 +86,8 @@ config = {
         "center": "title",
         "right": "next"
     },
-    "events": eventos,
 }
 
-# ------------------------------------------------------
-# RENDER
-# ------------------------------------------------------
-response = calendar(config=config)
+response = calendar(events=eventos, options=options)
+
+
