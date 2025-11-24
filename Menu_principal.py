@@ -17,7 +17,7 @@ st.markdown("""
 ### 📅 Ver calendario  
 Podras filtrar el usuario y/o la unidad minera para visualizar las visitas programadas :) 
 
-<br><br>
+<br>
 """, unsafe_allow_html=True)
 
 
@@ -48,6 +48,7 @@ No ingresar a esta sección, se utilizará únicamente para agregar a nuevos usu
 
 <br><br>
 """, unsafe_allow_html=True)
+
 
 
 
