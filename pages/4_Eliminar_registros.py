@@ -19,62 +19,42 @@ supabase: Client = init_supabase()
 #==============================================================
 def cargar_personas():
     resp = supabase.table("catalogo_personas").select("nombre").execute()
-    return [row["nombre"] for row in (resp.data or [])]
+    return ["TODOS"] + [row["nombre"] for row in (resp.data or [])]
 
 def cargar_clientes():
     resp = supabase.table("catalogo_clientes").select("nombre").execute()
     return [row["nombre"] for row in (resp.data or [])]
 
 # ============================================================
-# ESTADOS INICIALES
-# ============================================================
-if "post_guardado" not in st.session_state:
-    st.session_state.post_guardado = False
-
-if "default_persona" not in st.session_state:
-    st.session_state.default_persona = None
-
-if "default_cliente" not in st.session_state:
-    st.session_state.default_cliente = None
-
-if "default_rango" not in st.session_state:
-    st.session_state.default_rango = None
-
-# ============================================================
 # UI PRINCIPAL
 # ============================================================
 st.title("📆 Eliminar registros")
 
-# Personas y clientes con opción TODOS
-PERSONAS = ["TODOS"] + cargar_personas()
+# Selección de persona
+PERSONAS = cargar_personas()
 CLIENTES = cargar_clientes()
 
-persona_sel = st.selectbox(
-    "👤 Usuario",
-    PERSONAS,
-    key="persona_input"
-)
+persona_sel = st.selectbox("👤 Usuario", PERSONAS)
 
-
-# Generemos una lista de rangos existentes
+# ============================================================
+# FUNCIONES AUXILIARES
+# ============================================================
 def cargar_rangos(persona, cliente):
     query = supabase.table("BD_calendario_disponibilidad").select("*")
 
     if persona != "TODOS":
         query = query.eq("persona", persona)
 
-    if cliente != "TODOS":
-        query = query.eq("cliente", cliente)
+    query = query.eq("cliente", cliente)
 
     resp = query.execute()
     df = pd.DataFrame(resp.data)
     return df
 
-
 def generar_rangos(df):
     if df.empty:
         return pd.DataFrame(columns=["inicio", "fin"])
-
+    
     df = df.sort_values("fecha")
     df["fecha"] = pd.to_datetime(df["fecha"])
 
@@ -93,45 +73,36 @@ def generar_rangos(df):
     rangos.append({"inicio": inicio, "fin": fin})
     return pd.DataFrame(rangos)
 
-st.write("Debug:")
-
-
-rangos_df_debug = generar_rangos(cargar_rangos("TODOS","ANTAMINA"))
-
-st.dataframe(rangos_df_debug)
-
-
+# ============================================================
+# MOSTRAR CLIENTE + RANGOS
+# ============================================================
 for cliente in CLIENTES:
-    rangos_df = generar_rangos(cargar_rangos(persona_sel,cliente))
 
-    st.dataframe(rangos_df)
-    
-    rangos_df["label"] = rangos_df["inicio"].dt.date.astype(str) + " → " + rangos_df["fin"].dt.date.astype(str)
-    
-    rango_sel = st.selectbox("🗑️ Seleccionar rango a eliminar", rangos_df["label"])
+    st.subheader(f"🏢 {cliente}")
 
-    if st.button("❌ Eliminar rango"):
-        inicio_str = rango_sel.split(" → ")[0]
-        fin_str = rango_sel.split(" → ")[1]
+    df = cargar_rangos(persona_sel, cliente)
+    rangos_df = generar_rangos(df)
 
-        # Borrar todas las fechas dentro del rango
-        supabase.table("BD_calendario_disponibilidad") \
-            .delete() \
-            .gte("fecha", inicio_str) \
-            .lte("fecha", fin_str) \
-            .execute()
+    if rangos_df.empty:
+        st.info("No hay rangos registrados.")
+        continue
 
-        st.success("✅ Rango eliminado correctamente.")
-        st.rerun()
+    # Mostrar cada rango con su botón eliminar
+    for idx, row in rangos_df.iterrows():
+        inicio = row["inicio"].date()
+        fin = row["fin"].date()
 
+        col1, col2 = st.columns([3,1])
+        col1.write(f"📅 **{inicio} → {fin}**")
 
+        if col2.button("❌ Eliminar", key=f"del_{cliente}_{idx}"):
+            supabase.table("BD_calendario_disponibilidad") \
+                .delete() \
+                .gte("fecha", str(inicio)) \
+                .lte("fecha", str(fin)) \
+                .execute()
 
+            st.success("✅ Rango eliminado correctamente.")
+            st.rerun()
 
-
-
-
-
-
-
-
-
+    st.markdown("---")
