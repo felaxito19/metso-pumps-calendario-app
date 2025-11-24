@@ -72,7 +72,8 @@ def cargar_rangos(persona, cliente):
 
 rangos = cargar_rangos(persona_sel, cliente_sel)
 
-print(rangos)
+st.dataframe(rangos, use_container_width=True)
+
 
 # Mostramos la lista peo esta vez de RANGOS 
 
