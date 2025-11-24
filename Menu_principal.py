@@ -3,7 +3,7 @@ import streamlit as st
 st.set_page_config(
     page_title="Sistema de Disponibilidad",
     page_icon="📌",
-    layout="wide"
+    layout="centered"
 )
 
 st.title("📌 Sistema de Disponibilidad")
@@ -42,3 +42,4 @@ st.markdown("""
 
 <br><br>
 """, unsafe_allow_html=True)
+
