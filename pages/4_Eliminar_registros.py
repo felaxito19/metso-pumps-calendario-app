@@ -82,11 +82,13 @@ for cliente in CLIENTES:
     df = cargar_rangos(persona_sel, cliente)
     rangos_df = generar_rangos(df)
 
-    st.subheader(f"🏢 {cliente}")
+    
     
     if rangos_df.empty:
         continue
 
+    st.subheader(f"🏢 {cliente}")
+    
     # Mostrar cada rango con su botón eliminar
     for idx, row in rangos_df.iterrows():
         inicio = row["inicio"].date()
