@@ -93,7 +93,7 @@ def generar_rangos(df):
     rangos.append({"inicio": inicio, "fin": fin})
     return pd.DataFrame(rangos)
 
-st.write("Debug:)
+st.write("Debug:")
 
 
 rangos_df_debug = generar_rangos(cargar_rangos("TODOS","ANTAMINA"))
