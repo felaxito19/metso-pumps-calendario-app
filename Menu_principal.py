@@ -7,7 +7,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("Seguimiento - Visitas a minas")
+st.title("Seguimiento - Visitas a unidades mineras")
 st.write("Bienvenido al panel principal. Usa el menú de la izquierda para registrar actividades o visualizar el calendario.")
 
 # ======== DISEÑO VERTICAL ==========
@@ -34,6 +34,7 @@ Podras filtrar el usuario y/o la unidad minera para visualizar las visitas progr
 
 <br><br>
 """, unsafe_allow_html=True)
+
 
 
 
