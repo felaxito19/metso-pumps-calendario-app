@@ -53,7 +53,7 @@ if "default_rango" not in st.session_state:
 # ============================================================
 # UI PRINCIPAL
 # ============================================================
-st.title("📆 Registrar disponibilidad")
+st.title("📆 Registrar visita")
 
 PERSONAS = cargar_personas()
 CLIENTES = cargar_clientes()
@@ -63,15 +63,14 @@ persona_default = st.session_state.default_persona or PERSONAS[0]
 cliente_default = st.session_state.default_cliente or CLIENTES[0]
 rango_default = st.session_state.default_rango or date.today()
 
-persona = st.selectbox("👤 Nombre del empleado", PERSONAS, key="persona_input",
+persona = st.selectbox("👤 Usuario", PERSONAS, key="persona_input",
                        index=PERSONAS.index(persona_default))
 
-cliente = st.selectbox("🏢 Cliente", CLIENTES, key="cliente_input",
+cliente = st.selectbox("⛏️ Unidad Minera", CLIENTES, key="cliente_input",
                        index=CLIENTES.index(cliente_default))
 
 # Selección de rango
-rango = st.date_input("📅 Seleccionar rango de fechas", [])
-
+rango = st.date_input("📅 Seleccionar rango de fechas:", [])
 
 
 if not st.session_state.post_guardado:
@@ -121,10 +120,8 @@ if st.session_state.post_guardado:
             st.session_state.post_guardado = False
             st.rerun()
 
-    with col2:
-        if st.button("🚪 Salir"):
-            st.write("Gracias por registrar la disponibilidad.")
-            st.stop()
+
+
 
 
 
