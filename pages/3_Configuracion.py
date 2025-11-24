@@ -72,34 +72,6 @@ if st.button("➕ Agregar cliente"):
         st.error("Ingrese un nombre válido.")
 
 
-# ============================================================
-# 3. BORRAR TODOS LOS REGISTROS
-# ============================================================
-st.subheader("🗑 Borrar todos los registros del calendario")
 
-if "confirm_delete" not in st.session_state:
-    st.session_state.confirm_delete = False
-
-# Botón inicial
-if st.button("🛑 ELIMINAR TODOS LOS REGISTROS"):
-    st.session_state.confirm_delete = True
-
-# Si está en modo confirmación…
-if st.session_state.confirm_delete:
-    st.warning("¿Seguro? Esta acción NO se puede deshacer?")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("✔ Sí, borrar todo"):
-            supabase.table("BD_calendario_disponibilidad").delete().neq("id", -1).execute()
-            st.success("Todos los registros fueron eliminados correctamente.")
-            st.session_state.confirm_delete = False
-            st.rerun()
-
-    with col2:
-        if st.button("❌ Cancelar"):
-            st.session_state.confirm_delete = False
-            st.rerun()
 
 
