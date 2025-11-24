@@ -87,7 +87,7 @@ for cliente in CLIENTES:
     if rangos_df.empty:
         continue
 
-    st.subheader(f"🏢 {cliente}")
+    st.subheader(f"⛏️ {cliente}")
     
     # Mostrar cada rango con su botón eliminar
     for idx, row in rangos_df.iterrows():
