@@ -1,5 +1,5 @@
 import streamlit as st
-st.write("Holaaaa")
+
 
 st.set_page_config(
     page_title="Sistema de Disponibilidad",
@@ -7,27 +7,21 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("📌 Sistema de Disponibilidad")
+st.title("Seguimiento - Visitas a minas")
 st.write("Bienvenido al panel principal. Usa el menú de la izquierda para registrar actividades o visualizar el calendario.")
 
 # ======== DISEÑO VERTICAL ==========
-st.markdown("""
-<br>
 
-## 👋 Bienvenido  
-Este sistema permite que los empleados registren su disponibilidad de manera rápida y que el jefe pueda visualizar todo en un calendario moderno.
-
-<br>
-
-## 🔧 ¿Qué puedes hacer aquí?
-""", unsafe_allow_html=True)
+st.header("👋 Bienvenido")
+st.write("Este sistema permite dar seguimiento y visualizar las visitas del equipo en las unidades mineras")
 
 # SECCIÓN 1
+
 st.markdown("""
-### 📝 Registrar disponibilidad  
-- Seleccionar un empleado  
-- Elegir un cliente  
-- Registrar una o varias fechas  
+### 📝 Registrar visitas  
+- Seleccionar tu nombre 
+- Elegir la unidad minera  
+- Registrar las fechas de visita  
 - Guardar la actividad en la base de datos  
 
 <br>
@@ -36,12 +30,10 @@ st.markdown("""
 # SECCIÓN 2
 st.markdown("""
 ### 📅 Ver calendario  
-- Vista anual Multi-Mes  
-- Colores por persona  
-- Filtrar por empleado o cliente  
-- Revisar disponibilidad general  
+Podras filtrar el usuario y/o la unidad minera para visualizar las visitas programadas.  
 
 <br><br>
 """, unsafe_allow_html=True)
+
 
 
