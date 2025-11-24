@@ -1,4 +1,5 @@
 import streamlit as st
+st.write("Holaaaa")
 
 st.set_page_config(
     page_title="Sistema de Disponibilidad",
@@ -42,4 +43,5 @@ st.markdown("""
 
 <br><br>
 """, unsafe_allow_html=True)
+
 
